@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weeklyreport.mapper.ScheduleTaskMapper">
+    <resultMap id="BaseResultMap" type="com.weeklyreport.entity.ScheduleTask">
+        <id column="id" property="id"/>
+        <result column="task_name" property="taskName"/>
+        <result column="cron_expression" property="cronExpression"/>
+        <result column="sender_id" property="senderId"/>
+        <result column="recipient_ids" property="recipientIds"/>
+        <result column="subject" property="subject"/>
+        <result column="content" property="content"/>
+        <result column="enabled" property="enabled"/>
+        <result column="last_run_time" property="lastRunTime"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM schedule_task ORDER BY id
+    </select>
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT * FROM schedule_task WHERE id = #{id}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO schedule_task (task_name, cron_expression, sender_id, recipient_ids, subject, content, enabled)
+        VALUES (#{taskName}, #{cronExpression}, #{senderId}, #{recipientIds}, #{subject}, #{content}, #{enabled})
+    </insert>
+    <update id="updateById">
+        UPDATE schedule_task
+        <set>
+            <if test="taskName != null">task_name = #{taskName},</if>
+            <if test="cronExpression != null">cron_expression = #{cronExpression},</if>
+            <if test="senderId != null">sender_id = #{senderId},</if>
+            <if test="recipientIds != null">recipient_ids = #{recipientIds},</if>
+            <if test="subject != null">subject = #{subject},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="lastRunTime != null">last_run_time = #{lastRunTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM schedule_task WHERE id = #{id}
+    </delete>
+</mapper>

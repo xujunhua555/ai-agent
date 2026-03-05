@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weeklyreport.mapper.EmailRecipientMapper">
+    <resultMap id="BaseResultMap" type="com.weeklyreport.entity.EmailRecipient">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="email" property="email"/>
+        <result column="group_id" property="groupId"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+    <resultMap id="WithGroupNameResultMap" type="com.weeklyreport.entity.EmailRecipient" extends="BaseResultMap">
+        <result column="group_name" property="groupName"/>
+    </resultMap>
+    <select id="selectAll" resultMap="WithGroupNameResultMap">
+        SELECT r.*, g.name AS group_name
+        FROM email_recipient r
+        LEFT JOIN email_group g ON r.group_id = g.id
+        ORDER BY r.group_id, r.id
+    </select>
+    <select id="selectByGroup" resultMap="WithGroupNameResultMap">
+        SELECT r.*, g.name AS group_name
+        FROM email_recipient r
+        LEFT JOIN email_group g ON r.group_id = g.id
+        <where>
+            <if test="groupId != null">
+                r.group_id = #{groupId}
+            </if>
+        </where>
+        ORDER BY r.id
+    </select>
+    <select id="selectById" resultMap="WithGroupNameResultMap">
+        SELECT r.*, g.name AS group_name
+        FROM email_recipient r
+        LEFT JOIN email_group g ON r.group_id = g.id
+        WHERE r.id = #{id}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO email_recipient (name, email, group_id, is_default)
+        VALUES (#{name}, #{email}, #{groupId}, #{isDefault})
+    </insert>
+    <update id="updateById">
+        UPDATE email_recipient
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM email_recipient WHERE id = #{id}
+    </delete>
+</mapper>

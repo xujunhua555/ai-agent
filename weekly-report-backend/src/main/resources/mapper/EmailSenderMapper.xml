@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.weeklyreport.mapper.EmailSenderMapper">
+    <resultMap id="BaseResultMap" type="com.weeklyreport.entity.EmailSender">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="group_id" property="groupId"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+    <resultMap id="WithGroupNameResultMap" type="com.weeklyreport.entity.EmailSender" extends="BaseResultMap">
+        <result column="group_name" property="groupName"/>
+    </resultMap>
+    <select id="selectAll" resultMap="WithGroupNameResultMap">
+        SELECT s.*, g.name AS group_name
+        FROM email_sender s
+        LEFT JOIN email_group g ON s.group_id = g.id
+        ORDER BY s.id
+    </select>
+    <select id="selectById" resultMap="WithGroupNameResultMap">
+        SELECT s.*, g.name AS group_name
+        FROM email_sender s
+        LEFT JOIN email_group g ON s.group_id = g.id
+        WHERE s.id = #{id}
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO email_sender (name, group_id, email, password, is_default)
+        VALUES (#{name}, #{groupId}, #{email}, #{password}, #{isDefault})
+    </insert>
+    <update id="updateById">
+        UPDATE email_sender
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="isDefault != null">is_default = #{isDefault},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM email_sender WHERE id = #{id}
+    </delete>
+</mapper>
